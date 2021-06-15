@@ -1,51 +1,124 @@
 import React, { useState, useEffect, useRef } from "react";
-import ReactDOM from "react-dom";
 
-const tareas = [
-	{ label: "Lavar las Manos" },
-	{ label: "Programar en el PC" },
-	{ label: "Hacer la Cama" },
-	{ label: "Preparar la Comida" },
-	{ label: "Lavar las Manos" },
-	{ label: "Programar en el PC" },
-	{ label: "Hacer la Cama" },
-	{ label: "Preparar la Comida" }
-];
+async function putData(url = "", data = {}) {
+	// Default options are marked with *
+	const response = await fetch(url, {
+		method: "PUT", // *GET, POST, PUT, DELETE, etc.
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify(data)
+	});
+	console.log("Hola desde putData");
+	return response.json();
+}
+
+async function getData(url = "") {
+	// Default options are marked with *
+	const response = await fetch(url, {
+		method: "GET",
+		headers: {
+			"Content-Type": "application/json"
+		}
+	});
+	console.log("Hola desde getData");
+	return response.json();
+}
+
+async function delData(url = "") {
+	// Default options are marked with *
+	const response = await fetch(url, {
+		method: "DELETE", // *GET, POST, PUT, DELETE, etc.
+		headers: {
+			"Content-Type": "application/json"
+		}
+	});
+	console.log("Hola desde delData");
+	return response.json();
+}
+
+async function createData(url = "", data = {}) {
+	// Default options are marked with *
+	const response = await fetch(url, {
+		method: "POST", // *GET, POST, PUT, DELETE, etc.
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify(data)
+	});
+	console.log("Hola desde createData");
+	return response.json();
+}
 
 export function Home() {
-	const [tasks, setTasks] = useState(tareas);
+	const [tasks, setTasks] = useState([]);
 	const [conteo, setConteo] = useState(0);
-	const [tamaño, setTamaño] = useState(tareas.length);
+	const [tamaño, setTamaño] = useState(tasks.length);
 
 	let alert = useRef("");
+	let baseDatos =
+		"https://assets.breatheco.de/apis/fake/todos/user/emiliojelves";
+
+	//useEffect Inicial que llama a la Data
+	useEffect(() => {
+		console.log("Hola desde useEffect");
+
+		//Crear Data
+		// createData(baseDatos, []);
+
+		//Borrar Data
+		// delData(baseDatos);
+
+		//Put Data
+		// putData(baseDatos, []).then(data => {
+		// 	console.log("Data Actualizada");
+		// 	console.log(data); // JSON data parsed by `data.json()` call
+		// });
+
+		//Get Data
+		getData(baseDatos).then(data => {
+			setTasks(data);
+		});
+	}, []);
+
+	//useEffect Que Actualiza Data en BD al cambiar tasks
+	useEffect(() => {
+		putData(baseDatos, tasks).then(data => {
+			console.log(data); // JSON data parsed by `data.json()` call
+		});
+
+		console.log("Data Actualizada");
+	}, [tasks]);
 
 	useEffect(() => {
-		console.log(alert.current.style.display);
-		// tamaño == 0 ? console.log("Hola desde useEffect") : "";
-		if (tamaño == 0) {
-			// console.log(alert.current.style);
+		if (tasks.length == 0) {
 			alert.current.style.display = "";
 		} else {
 			alert.current.style.display = "none";
 		}
 	});
 
+	/*Handlers      */
+	//Al borrar
 	const handler = event => {
-		let element = document.getElementById(event.target.id);
-		// console.log(element);
-		element.parentNode.removeChild(element);
+		console.log("Hola desde handler");
+		console.log(event.target);
+		let element2 = tasks.filter((item, index) => index != event.target.id);
+		setTasks(element2);
 		setConteo(conteo + 1);
-		setTamaño(tamaño - 1);
+		// setTamaño(tamaño - 1);
 	};
 
+	//On Enter
 	const onEnter = event => {
 		if (event.keyCode === 13) {
-			setTasks(tasks.concat({ label: event.target.value }));
+			setTasks(tasks.concat({ label: event.target.value, done: false }));
 			event.target.value = "";
-			setTamaño(tamaño + 1);
+			// setTamaño(tamaño + 1);
 		}
 	};
 
+	//Returns
 	return (
 		<div className="text-center">
 			<div className="bg-light">
