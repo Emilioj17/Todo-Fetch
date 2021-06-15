@@ -63,7 +63,7 @@ export function Home() {
 	useEffect(() => {
 		console.log("Hola desde useEffect");
 
-		//Crear Data
+		// // Crear Data
 		// createData(baseDatos, []);
 
 		//Borrar Data
@@ -75,7 +75,7 @@ export function Home() {
 		// 	console.log(data); // JSON data parsed by `data.json()` call
 		// });
 
-		//Get Data
+		// //Get Data
 		getData(baseDatos).then(data => {
 			setTasks(data);
 		});
@@ -118,6 +118,14 @@ export function Home() {
 		}
 	};
 
+	//Borrar todas las tareas
+	const handlerBorrar = evento => {
+		// console.log("Hola desde Borrar");
+		setConteo(conteo + tasks.length);
+		let element2 = [];
+		setTasks(element2);
+	};
+
 	//Returns
 	return (
 		<div className="text-center">
@@ -153,6 +161,14 @@ export function Home() {
 					))}
 					<p className="pt-2">{conteo} items se han ido</p>
 				</ul>
+				<div className="d-flex justify-content-end">
+					<input
+						className="btn btn-warning"
+						type="button"
+						onClick={handlerBorrar}
+						value="Borrar Tareas"
+					/>
+				</div>
 			</div>
 		</div>
 	);
